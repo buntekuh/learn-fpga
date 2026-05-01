@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
 PROJECT_NAME=SOC
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-TOOLS_DIR=/home/buntekuh/pi/fpga/femtorv32/tools
-DB_DIR=${TOOLS_DIR}/prjxray-extract/opt/nextpnr-xilinx/external/prjxray-db
-CHIPDB_DIR=/home/buntekuh/pi/fpga/femtorv32/resources
+DB_DIR=${PRJXRAY_DB_DIR:-/usr/share/nextpnr/prjxray-db}
+CHIPDB_DIR=${NEXTPNR_CHIPDB_DIR:-/usr/share/nextpnr/xilinx-chipdb}
 PART=xc7a35tcpg236-1
-VERILOGS=$1
+VERILOGS=${1:-cmod_a7_vhdl/step1_cmod_a7.v}
 MODE=${2:-br}
 BOARD_FREQ=100
 CPU_FREQ=100
-
-export PATH="${TOOLS_DIR}/bin:${PATH}"
-export LD_LIBRARY_PATH="${TOOLS_DIR}/lib:${LD_LIBRARY_PATH}"
 
 set -ex
 if [[ "$MODE" == "b" || "$MODE" == "br" ]]; then

@@ -1,13 +1,7 @@
 PARTNAME=xc7a35tcpg236-1
-FPGA_TOOLS=/home/buntekuh/pi/fpga/femtorv32/tools
-DB_DIR=$(FPGA_TOOLS)/prjxray-extract/opt/nextpnr-xilinx/external/prjxray-db
-CHIPDB_DIR=/home/buntekuh/pi/fpga/femtorv32/resources
+DB_DIR ?= /usr/share/nextpnr/prjxray-db
+CHIPDB_DIR ?= /usr/share/nextpnr/xilinx-chipdb
 PART=xc7a35tcpg236-1
-
-export PATH := $(FPGA_TOOLS)/bin:$(PATH)
-export LD_LIBRARY_PATH := $(FPGA_TOOLS)/lib:$(LD_LIBRARY_PATH)
-export PYTHONHOME := $(FPGA_TOOLS)/python38-home/usr
-export PYTHONPATH := $(FPGA_TOOLS)/prjxray-snap/opt/prjxray:$(FPGA_TOOLS)/prjxray-snap/usr/lib/python3/dist-packages:$(FPGA_TOOLS)/prjxray-snap/lib/python3.8/site-packages
 
 # cascading DSPs not supported yet by nextpnr-xilinx -----.
 # -DCMODA7 ... -q      -p " ... -nowidelut ..."             v
