@@ -17,6 +17,21 @@ end entity SOC;
 architecture rtl of SOC is
     -- 25-bit counter: at 12 MHz, bit 23 ~ 1.4 Hz, bit 24 ~ 0.7 Hz
     signal count : unsigned(24 downto 0) := (others => '0');
+
+    -- iterate over pattern bytes in memory
+    signal ref : unsigned(2 downto 0) := (others => '0');
+
+    -- Memory array with initial values
+    type MEM_TYPE is array (0 to 20) of std_logic_vector(4 downto 0);
+    constant MEM : MEM_TYPE := (
+        "00000", 
+        "00001", 
+        "00010", 
+        "00100", 
+        "01000", 
+        "10000",
+        others => "00000"
+    );
 begin
 
     process(CLK)
@@ -24,8 +39,14 @@ begin
         if rising_edge(CLK) then
             if RESET = '1' then
                 count <= (others => '0');
+                ref <= (others => '0);
             else
                 count <= count + 1;
+                ref <= ref + 1;
+                if (ref = 6) then
+                    ref <= (others => '0'); -- Reset to 0
+                end if;
+
             end if;
         end if;
     end process;

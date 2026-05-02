@@ -28,3 +28,5 @@ FemtoRV/TOOLS/requirements.txt
 *.fasm
 *.frames
 log.txt
+*_ghdl.v
+a.out

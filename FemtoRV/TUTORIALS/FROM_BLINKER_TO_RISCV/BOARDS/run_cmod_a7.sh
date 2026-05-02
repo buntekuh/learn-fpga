@@ -1,15 +1,24 @@
 #!/usr/bin/env bash
 PROJECT_NAME=SOC
-DB_DIR=${PRJXRAY_DB_DIR:-/usr/share/nextpnr/prjxray-db}
-CHIPDB_DIR=${NEXTPNR_CHIPDB_DIR:-/usr/share/nextpnr/xilinx-chipdb}
+DB_DIR=${FEMTORV32_DIR:+$FEMTORV32_DIR/tools/prjxray-extract/opt/nextpnr-xilinx/external/prjxray-db}
+DB_DIR=${DB_DIR:-/usr/share/nextpnr/prjxray-db}
+CHIPDB_DIR=${FEMTORV32_DIR:+$FEMTORV32_DIR/resources}
+CHIPDB_DIR=${CHIPDB_DIR:-/usr/share/nextpnr/xilinx-chipdb}
 PART=xc7a35tcpg236-1
-VERILOGS=${1:-cmod_a7_vhdl/step1_cmod_a7.v}
+INPUT=${1:-cmod_a7_vhdl/step1.vhd}
 MODE=${2:-br}
 BOARD_FREQ=100
 CPU_FREQ=100
 
 set -ex
 if [[ "$MODE" == "b" || "$MODE" == "br" ]]; then
+    if [[ "$INPUT" == *.vhd || "$INPUT" == *.vhdl ]]; then
+        # VHDL: use ghdl synth to produce Verilog, then synthesise with yosys
+        ghdl synth --std=08 --out=verilog "$INPUT" -e SOC > ${PROJECT_NAME}_ghdl.v
+        VERILOGS=${PROJECT_NAME}_ghdl.v
+    else
+        VERILOGS=$INPUT
+    fi
     yosys -DCMODA7 -DBOARD_FREQ=$BOARD_FREQ -DCPU_FREQ=$CPU_FREQ -p "scratchpad -set xilinx_dsp.multonly 1" -p "synth_xilinx -nowidelut -flatten -abc9 -arch xc7 -top SOC; delete t:\$scopeinfo; write_json ${PROJECT_NAME}.json" ${VERILOGS}
     nextpnr-xilinx --chipdb ${CHIPDB_DIR}/xc7a35tcpg236-1.bin --xdc BOARDS/cmod_a7.xdc --json ${PROJECT_NAME}.json --write ${PROJECT_NAME}_routed.json --fasm ${PROJECT_NAME}.fasm
     fasm2frames --part ${PART} --db-root ${DB_DIR}/artix7 ${PROJECT_NAME}.fasm > ${PROJECT_NAME}.frames
