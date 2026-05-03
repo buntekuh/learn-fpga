@@ -18,7 +18,7 @@ entity SOC is
 end entity SOC;
 
 architecture rtl of SOC is
-    signal clk    : std_logic;
+    signal slow_clk    : std_logic;
     signal resetn : std_logic;
     signal ref    : unsigned(2 downto 0) := (others => '0');
 
@@ -40,16 +40,16 @@ begin
         port map(
             CLK     => CLK,
             RESET   => RESET,
-            clk_out => clk,
+            clk_out => slow_clk,
             resetn  => resetn
         );
 
-    process(clk, resetn)
+    process(slow_clk, resetn)
     begin
         if resetn = '0' then
             ref <= (others => '0');
-        elsif rising_edge(clk) then
-            if ref = 5 then
+        elsif rising_edge(slow_clk) then
+            if ref = 6 then
                 ref <= (others => '0');
             else
                 ref <= ref + 1;

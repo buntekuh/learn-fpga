@@ -49,7 +49,7 @@ begin
         signal resetn_i  : std_logic;
     begin
         clk_out  <= CLK;
-        resetn_i <= '1' when reset_cnt = (others => '1') else '0';
+        resetn_i <= and reset_cnt;  -- '1' when all bits are 1, same as Verilog &reset_cnt
         resetn   <= resetn_i;
 
         process(CLK, RESET)
