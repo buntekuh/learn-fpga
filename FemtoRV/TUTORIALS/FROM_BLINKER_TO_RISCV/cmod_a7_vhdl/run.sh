@@ -5,6 +5,7 @@ set -e
 STEP=${1:-step1.vhd}
 BENCH=bench_${STEP%.vhd}.vhd
 
-ghdl -a --std=08 "$STEP" "$BENCH"
+VHDL_DEPS=$(ls library/*.vhd 2>/dev/null || true)
+ghdl -a --std=08 $VHDL_DEPS "$STEP" "$BENCH"
 ghdl -e --std=08 bench
 ghdl -r --std=08 bench --stop-time=500ms

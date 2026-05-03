@@ -14,7 +14,10 @@ set -ex
 if [[ "$MODE" == "b" || "$MODE" == "br" ]]; then
     if [[ "$INPUT" == *.vhd || "$INPUT" == *.vhdl ]]; then
         # VHDL: use ghdl synth to produce Verilog, then synthesise with yosys
-        ghdl synth --std=08 --out=verilog "$INPUT" -e SOC > ${PROJECT_NAME}_ghdl.v
+        # Analyze library files first so their entities are visible to the step file.
+        VHDL_LIB=$(dirname "$INPUT")/library
+        VHDL_DEPS=$(ls "$VHDL_LIB"/*.vhd 2>/dev/null || true)
+        ghdl synth --std=08 --out=verilog $VHDL_DEPS "$INPUT" -e SOC > ${PROJECT_NAME}_ghdl.v
         VERILOGS=${PROJECT_NAME}_ghdl.v
     else
         VERILOGS=$INPUT
