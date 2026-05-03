@@ -3,8 +3,11 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 -- Cmod A7-35T: 5 breadboard LEDs on DIP pins 26-30 (LEDS[2..6])
--- Uses Clockworks with SLOW=22 to advance one pattern every ~0.7 s at 12 MHz.
+-- SLOW=22 advances one pattern every ~0.35 s at 12 MHz; use a small value in simulation.
 entity SOC is
+    generic (
+        SLOW : integer := 22
+    );
     port (
         CLK   : in  std_logic;
         RESET : in  std_logic;
@@ -33,7 +36,7 @@ architecture rtl of SOC is
 begin
 
     CW: entity work.Clockworks
-        generic map(SLOW => 22)
+        generic map(SLOW => SLOW)
         port map(
             CLK     => CLK,
             RESET   => RESET,
